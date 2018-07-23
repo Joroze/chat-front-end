@@ -50,7 +50,7 @@ export const getSocket = () => socket;
 // Socket Handling
 export function connectSocket() {
   return (dispatch, getState) => {
-    socket = io('http://localhost:4001/chat');
+    socket = io('https://chat.backend.joroze.com:4001/chat');
 
     socket.on('connect', () => {
       dispatch(Action(CHAT_STREAM_CONNECTED, socket.id));
