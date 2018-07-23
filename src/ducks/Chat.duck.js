@@ -45,7 +45,7 @@ export const getUserList = () => Action(GET_USER_LIST_AJAX);
 
 let socket;
 
-export   getSocket = () => socket;
+export const getSocket = () => socket;
 
 // Socket Handling
 export function connectSocket() {
