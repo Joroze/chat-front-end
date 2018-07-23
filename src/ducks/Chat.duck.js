@@ -236,7 +236,7 @@ function kickUserEpic(action$) {
 function getUserListEpic(action$) {
   return action$.pipe(
     ofType(GET_USER_LIST_AJAX),
-    switchMap(action => ajax.getJSON('https://chat.backend.joroze.com/users').pipe(
+    switchMap(action => ajax.getJSON('https://chat.backend.joroze.com:4001/users').pipe(
       map(result => Action(GET_USER_LIST_AJAX_COMPLETED, result)),
       catchError(error => ErrorAction(GET_USER_LIST_AJAX_ERROR, ajaxErrorMessage(error))),
       startWith(Action(GET_USER_LIST_AJAX_STARTED)),
