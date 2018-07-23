@@ -1,0 +1,253 @@
+import { combineEpics, ofType } from 'redux-observable';
+import { of } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
+import io from 'socket.io-client';
+import { createSelector } from 'reselect';
+import { cloneDeep } from 'lodash';
+import {
+  catchError,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs/operators';
+import * as R from 'ramda';
+
+import { ajaxErrorMessage, Action, ErrorAction } from '../utilities';
+
+// Actions
+export const CHAT_STREAM_TOGGLED = 'ContactForm/CHAT_STREAM_TOGGLED';
+export const CHAT_STREAM_STARTED = 'ContactForm/CHAT_STREAM_STARTED';
+export const CHAT_STREAM_STOPPED = 'ContactForm/CHAT_STREAM_STOPPED';
+export const CHAT_STREAM_CONNECTED = 'ContactForm/CHAT_STREAM_CONNECTED';
+export const CHAT_STREAM_DISCONNECTED = 'ContactForm/CHAT_STREAM_DISCONNECTED';
+export const CHAT_STREAM_ERROR = 'ContactForm/CHAT_STREAM_ERROR';
+
+export const CHAT_MESSAGE_ON_SUBMIT = 'ContactForm/CHAT_MESSAGE_ON_SUBMIT';
+export const CHAT_MESSAGE_SENT = 'ContactForm/CHAT_MESSAGE_SENT';
+export const CHAT_MESSAGE_RECEIVED = 'ContactForm/CHAT_MESSAGE_RECEIVED';
+
+export const KICK_USER = 'ContactForm/KICK_USER';
+export const KICK_USER_SENT = 'ContactForm/KICK_USER_SENT';
+
+export const USER_UPDATE_RECEIVED = 'ContactForm/USER_UPDATE_RECEIVED';
+export const USER_LEAVE_RECEIVED = 'ContactForm/USER_LEAVE_RECEIVED';
+
+export const GET_USER_LIST_AJAX = 'ContactForm/GET_USER_LIST_AJAX';
+export const GET_USER_LIST_AJAX_STARTED = 'ContactForm/GET_USER_LIST_AJAX_STARTED';
+export const GET_USER_LIST_AJAX_COMPLETED = 'ContactForm/GET_USER_LIST_AJAX_COMPLETED';
+export const GET_USER_LIST_AJAX_ERROR = 'ContactForm/GET_USER_LIST_AJAX_ERROR';
+
+// Action Creators
+export const toggleChatStream = isEnabled => Action(CHAT_STREAM_TOGGLED, isEnabled);
+export const sendChat = msg => Action(CHAT_MESSAGE_ON_SUBMIT, msg);
+export const kickUser = socketId => Action(KICK_USER, socketId);
+export const getUserList = () => Action(GET_USER_LIST_AJAX);
+
+let socket;
+
+export const getSocket = () => socket;
+
+// Socket Handling
+export function connectSocket() {
+  return (dispatch, getState) => {
+    socket = io('http://localhost:4001/chat');
+
+    socket.on('connect', () => {
+      dispatch(Action(CHAT_STREAM_CONNECTED, socket.id));
+      dispatch(getUserList());
+    });
+
+    // when you (client user) disconnects
+    socket.on('disconnect', (reason) => {
+      console.log(reason);
+      dispatch(Action(CHAT_STREAM_DISCONNECTED, reason));
+    });
+
+    // when someone else leaves
+    socket.on('user_disconnect', (data) => {
+      dispatch(Action(USER_LEAVE_RECEIVED, data));
+    });
+
+    socket.on('user', (data) => {
+      dispatch(Action(USER_UPDATE_RECEIVED, data));
+    });
+
+    socket.on('message', (data) => {
+      console.log(data);
+      dispatch(Action(CHAT_MESSAGE_RECEIVED, data));
+    });
+
+    socket.on('serverError', (msg) => {
+      console.log('Server Socket error!!!!1');
+      dispatch(Action(CHAT_STREAM_ERROR, ajaxErrorMessage(msg)));
+    });
+
+    dispatch(Action(CHAT_STREAM_STARTED));
+  };
+}
+
+// Define the initial state for the reducer
+export const initialState = {
+  author: 'Jordan',
+  clientId: '',
+  isChatStreamEnabled: false,
+  isChatStreamOnline: false,
+  isLoading: false,
+  messageList: [],
+  responseMessage: '',
+  subject: 'Anything goes',
+  title: 'Chill Room',
+  userDictionary: {},
+};
+
+const userDictionarySelector = state => state.chat.userDictionary;
+const clientIdSelector = state => state.chat.clientId;
+
+export const getUserListSelector = createSelector(
+  userDictionarySelector,
+  users => R.values(users),
+);
+
+export const getUserSelector = createSelector(
+  userDictionarySelector,
+  clientIdSelector,
+  (usersDictionary, clientId) => usersDictionary[clientId],
+);
+
+// Contact Form Reducer
+export function reducer(state = initialState, action) {
+  const mergeToState = R.merge(state);
+
+  switch (action.type) {
+    case GET_USER_LIST_AJAX_STARTED:
+      return mergeToState({
+        isLoading: true,
+      });
+    case GET_USER_LIST_AJAX_COMPLETED: {
+      const updatedState = mergeToState({
+        isLoading: false,
+      });
+
+      updatedState.userDictionary = action.payload;
+
+      return updatedState;
+    }
+    case GET_USER_LIST_AJAX_ERROR:
+      return mergeToState({
+        isLoading: false,
+        responseMessage: action.payload,
+      });
+    case CHAT_STREAM_TOGGLED: {
+      const updatedState = mergeToState({
+        isChatStreamEnabled: !state.isChatStreamEnabled,
+      });
+
+      updatedState.messageList = [];
+      updatedState.userDictionary = {};
+
+      return updatedState;
+    }
+    case CHAT_STREAM_STARTED:
+      return mergeToState({
+        isChatStreamEnabled: true,
+      });
+    case CHAT_STREAM_STOPPED:
+      return mergeToState({
+        isChatStreamEnabled: false,
+      });
+    case CHAT_STREAM_CONNECTED:
+      return mergeToState({
+        clientId: action.payload,
+        isChatStreamEnabled: true,
+        isChatStreamOnline: true,
+      });
+    case CHAT_STREAM_DISCONNECTED:
+      return mergeToState({
+        isChatStreamEnabled: true,
+        isChatStreamOnline: false,
+      });
+    case CHAT_STREAM_ERROR:
+      return mergeToState({
+        isChatStreamEnabled: true,
+        isChatStreamOnline: false,
+      });
+    case CHAT_MESSAGE_RECEIVED:
+      return mergeToState({
+        messageList: [...state.messageList, action.payload],
+      });
+    case USER_UPDATE_RECEIVED: {
+      const updatedUser = action.payload;
+      const userDictionary = cloneDeep(state.userDictionary);
+
+      userDictionary[updatedUser.id] = updatedUser;
+
+      return R.assoc('userDictionary', userDictionary, state);
+    }
+    case USER_LEAVE_RECEIVED: {
+      const updatedUser = action.payload;
+      const userDictionary = cloneDeep(state.userDictionary);
+
+      delete userDictionary[updatedUser.id];
+
+      return R.assoc('userDictionary', userDictionary, state);
+    }
+    default:
+      return state;
+  }
+}
+
+// Epics
+function chatStreamToggleEpic(action$) {
+  return action$.pipe(
+    ofType(CHAT_STREAM_TOGGLED),
+    map((action) => {
+      const isEnabled = !action.payload;
+
+      if (isEnabled) {
+        return connectSocket();
+      }
+
+      socket.disconnect();
+      return Action(CHAT_STREAM_STOPPED);
+    }),
+  );
+}
+
+function sendChatEpic(action$) {
+  return action$.pipe(
+    ofType(CHAT_MESSAGE_ON_SUBMIT),
+    switchMap((action) => {
+      socket.emit('message', action.payload);
+      return of(Action(CHAT_MESSAGE_SENT));
+    }),
+  );
+}
+
+function kickUserEpic(action$) {
+  return action$.pipe(
+    ofType(KICK_USER),
+    switchMap((action) => {
+      socket.emit('disconnect_user', action.payload);
+      return of(Action(KICK_USER_SENT));
+    }),
+  );
+}
+
+function getUserListEpic(action$) {
+  return action$.pipe(
+    ofType(GET_USER_LIST_AJAX),
+    switchMap(action => ajax.getJSON('http://localhost:4001/users').pipe(
+      map(result => Action(GET_USER_LIST_AJAX_COMPLETED, result)),
+      catchError(error => ErrorAction(GET_USER_LIST_AJAX_ERROR, ajaxErrorMessage(error))),
+      startWith(Action(GET_USER_LIST_AJAX_STARTED)),
+    )),
+  );
+}
+
+
+export const chatEpic = combineEpics(
+  chatStreamToggleEpic,
+  getUserListEpic,
+  sendChatEpic,
+  kickUserEpic,
+);
