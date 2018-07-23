@@ -45,7 +45,7 @@ export const getUserList = () => Action(GET_USER_LIST_AJAX);
 
 let socket;
 
-export const getSocket = () => socket;
+export   getSocket = () => socket;
 
 // Socket Handling
 export function connectSocket() {
@@ -236,7 +236,7 @@ function kickUserEpic(action$) {
 function getUserListEpic(action$) {
   return action$.pipe(
     ofType(GET_USER_LIST_AJAX),
-    switchMap(action => ajax.getJSON('http://localhost:4001/users').pipe(
+    switchMap(action => ajax.getJSON('https://chat.backend.joroze.com/users').pipe(
       map(result => Action(GET_USER_LIST_AJAX_COMPLETED, result)),
       catchError(error => ErrorAction(GET_USER_LIST_AJAX_ERROR, ajaxErrorMessage(error))),
       startWith(Action(GET_USER_LIST_AJAX_STARTED)),
