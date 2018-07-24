@@ -1,4 +1,8 @@
-.comment-list {
-    overflow-y: auto;
-    max-height: 500px;
+.component-chat-comment-pane {
+    max-width: none !important;
+
+    .comment-list {
+        overflow-y: auto;
+        max-height: 500px;
+    }
 }

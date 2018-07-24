@@ -43,7 +43,7 @@ class ChatCommentPane extends React.Component {
     const { inputField } = this.state;
 
     return (
-      <Comment.Group>
+      <Comment.Group className="component-chat-comment-pane">
         <Header as="h3" dividing>
           {subject}
         </Header>
