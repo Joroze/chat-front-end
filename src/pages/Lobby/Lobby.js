@@ -1,3 +1,4 @@
+import './Lobby.css';
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -18,14 +19,22 @@ function Lobby(props) {
     toggleChatStreamDispatch(isChatStreamEnabled);
   }
   return (
-    <div>
-      <div>Chat stream is {isChatStreamOnline ? 'online' : 'offline'}</div>
-      <Checkbox
-        label={`Toggle Stream (${isChatStreamEnabled})`}
-        toggle
-        checked={isChatStreamEnabled}
-        onChange={handleOnToggleChat}
-      />
+    <div className="component-lobby">
+      <div className="control-header">
+        <div className="connection-status-text">
+          Connection:
+          <span className={`status ${isChatStreamOnline ? 'online' : 'offline'}`}>
+            {isChatStreamOnline ? 'Online' : 'Offline'}
+          </span>
+        </div>
+        <Checkbox
+          label="Toggle Connection"
+          toggle
+          checked={isChatStreamEnabled}
+          onChange={handleOnToggleChat}
+        />
+      </div>
+
 
       <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
     </div>

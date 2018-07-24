@@ -1,0 +1,14 @@
+.component-lobby .control-header {
+  display: flex;
+  position: relative;
+  padding-top: 15px;
+  padding-bottom: 15px; }
+  .component-lobby .control-header .connection-status-text .status {
+    padding-left: 5px; }
+    .component-lobby .control-header .connection-status-text .status.offline {
+      color: red; }
+    .component-lobby .control-header .connection-status-text .status.online {
+      color: green; }
+  .component-lobby .control-header .ui.toggle.checkbox {
+    position: absolute;
+    right: 0; }

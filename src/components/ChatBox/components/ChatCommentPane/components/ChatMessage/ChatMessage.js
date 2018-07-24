@@ -1,7 +1,7 @@
 import './ChatMessage.css';
 
 import React from 'react';
-import { Comment } from 'semantic-ui-react';
+import { Comment, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -24,7 +24,10 @@ function ChatMessage(props) {
 
   return (
     <Comment>
-      <Comment.Avatar src={isServerMessage ? undefined : author.avatar || logo} />
+      {isServerMessage
+        ? <Comment.Avatar src={<Icon size="big" name="server" />} />
+        : <Comment.Avatar src={author.isAdmin ? logo : author.avatar || <Icon size="big" name="user circle" />} />
+      }
       <Comment.Content>
         <Comment.Author as="a">{username}</Comment.Author>
         <Comment.Metadata>

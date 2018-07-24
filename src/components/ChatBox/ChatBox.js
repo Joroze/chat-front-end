@@ -18,11 +18,10 @@ function ChatBox(props) {
     online,
   } = props;
 
-  console.log('userList: ', userList);
   return (
     <div>
       <Dimmer.Dimmable>
-        {title}
+        Room: {title}
         <ChatCommentPane
           messageList={messageList}
           subject={subject}
@@ -32,7 +31,7 @@ function ChatBox(props) {
         <ChatUserListPane userList={userList} />
 
         <Dimmer active={!online || disabled}>
-          {!online && !disabled && <Loader />}
+          {!online && !disabled && <Loader content="Connecting..." />}
         </Dimmer>
       </Dimmer.Dimmable>
     </div>

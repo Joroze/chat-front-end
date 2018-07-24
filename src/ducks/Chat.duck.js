@@ -57,9 +57,9 @@ export function connectSocket() {
       dispatch(getUserList());
     });
 
-    // when you (client user) disconnects
+    // when you (client user) disconnects by client
+    // or gets disconnected by server
     socket.on('disconnect', (reason) => {
-      console.log(reason);
       dispatch(Action(CHAT_STREAM_DISCONNECTED, reason));
     });
 
@@ -73,7 +73,6 @@ export function connectSocket() {
     });
 
     socket.on('message', (data) => {
-      console.log(data);
       dispatch(Action(CHAT_MESSAGE_RECEIVED, data));
     });
 
@@ -95,7 +94,7 @@ export const initialState = {
   isLoading: false,
   messageList: [],
   responseMessage: '',
-  subject: 'Anything goes',
+  subject: "Welcome to Jordan's Room",
   title: 'Chill Room',
   userDictionary: {},
 };
@@ -161,11 +160,17 @@ export function reducer(state = initialState, action) {
         isChatStreamEnabled: true,
         isChatStreamOnline: true,
       });
-    case CHAT_STREAM_DISCONNECTED:
-      return mergeToState({
-        isChatStreamEnabled: true,
+    case CHAT_STREAM_DISCONNECTED: {
+      const updatedState = mergeToState({
+        isChatStreamEnabled: false,
         isChatStreamOnline: false,
       });
+
+      updatedState.messageList = [];
+      updatedState.userDictionary = {};
+
+      return updatedState;
+    }
     case CHAT_STREAM_ERROR:
       return mergeToState({
         isChatStreamEnabled: true,

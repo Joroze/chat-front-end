@@ -1,3 +1,5 @@
+import './ChatCommentPane.css';
+
 import React from 'react';
 import {
   Button,
@@ -46,15 +48,17 @@ class ChatCommentPane extends React.Component {
           {subject}
         </Header>
 
-        {messageList.map(message => (
-          <ChatMessage
-            key={uuidv4()}
-            author={message.author}
-            timestamp={message.timestamp}
-            text={message.text}
-            type={message.type}
-          />
-        ))}
+        <div className="comment-list">
+          {messageList.map(message => (
+            <ChatMessage
+              key={uuidv4()}
+              author={message.author}
+              timestamp={message.timestamp}
+              text={message.text}
+              type={message.type}
+            />
+          ))}
+        </div>
 
         <Form reply>
           <Form.TextArea value={inputField} onChange={this.handleTextAreaChange} />

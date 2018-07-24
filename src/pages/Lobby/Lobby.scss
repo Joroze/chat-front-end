@@ -1,0 +1,27 @@
+.component-lobby {
+    .control-header {
+        display: flex;
+        position: relative;
+        padding-top: 15px;
+        padding-bottom: 15px;
+
+        .connection-status-text {
+            .status {
+                padding-left: 5px;
+
+                &.offline {
+                    color: red;
+                }
+    
+                &.online {
+                    color: green;
+                }
+            }
+        }
+
+        .ui.toggle.checkbox {
+            position: absolute;
+            right: 0;
+        }
+    }
+}

@@ -8,11 +8,9 @@ import {
   Icon,
 } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import * as R from 'ramda';
 import { connect } from 'react-redux';
-
 import { kickUser, getUserSelector } from 'ducks/Chat.duck';
-import logo from 'img/logo.png';
 
 function UserListItem(props) {
   const {
@@ -32,7 +30,9 @@ function UserListItem(props) {
 
   let roleName = '';
 
-  const canKickUsers = clientUser && (clientUser.isAdmin || clientUser.isModerator);
+  const isKickUserButtonVisible = clientUser && (clientUser.isAdmin || clientUser.isModerator);
+  const isSelf = clientUser.id === userId;
+  const isKickUserButtonDisabled = isSelf || isAdmin;
 
   if (isAuthor) roleName = 'Author';
   else if (isAdmin) roleName = 'Admin';
@@ -41,17 +41,20 @@ function UserListItem(props) {
   return (
     <List.Item>
       <List.Content floated="right">
-        {canKickUsers && (
-        <Button onClick={handleClickKickUser} disabled={clientUser.id === userId} animated="vertical">
+        {isKickUserButtonVisible && (
+        <Button onClick={handleClickKickUser} disabled={isKickUserButtonDisabled} animated="vertical">
           <Button.Content hidden><Icon name="hand peace outline" /></Button.Content>
           <Button.Content visible>Kick</Button.Content>
         </Button>
         ) }
       </List.Content>
-      <Image avatar src={avatar || logo} />
+      { R.isEmpty(avatar)
+        ? <Icon size="big" name="user circle" />
+        : <Image avatar src={avatar} />
+      }
       <List.Content>
         <List.Header>{username}</List.Header>
-        {roleName}
+        {roleName} {isSelf ? '(Me)' : ''}
       </List.Content>
     </List.Item>
   );
@@ -64,6 +67,7 @@ UserListItem.propTypes = {
   isAuthor: PropTypes.bool,
   isModerator: PropTypes.bool,
   username: PropTypes.string,
+  kickUserDispatch: PropTypes.func,
 };
 
 UserListItem.defaultProps = {
@@ -71,8 +75,10 @@ UserListItem.defaultProps = {
   userId: '',
   isAdmin: false,
   isAuthor: false,
+  clientUser: {},
   isModerator: false,
   username: 'Guest',
+  kickUserDispatch: () => null,
 };
 
 function mapStateToProps(state) {
