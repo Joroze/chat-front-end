@@ -12,6 +12,7 @@ function ChatBox(props) {
     author,
     messageList,
     subject,
+    isUserListLoading,
     title,
     userList,
     disabled,
@@ -30,8 +31,8 @@ function ChatBox(props) {
 
         <ChatUserListPane userList={userList} />
 
-        <Dimmer active={!online || disabled}>
-          {!online && !disabled && <Loader content="Connecting..." />}
+        <Dimmer active={!online || disabled || isUserListLoading}>
+          {(!online || isUserListLoading) && !disabled && <Loader content="Connecting..." />}
         </Dimmer>
       </Dimmer.Dimmable>
     </div>
@@ -45,6 +46,7 @@ ChatBox.propTypes = {
   messageList: PropTypes.arrayOf(PropTypes.object),
   subject: PropTypes.string,
   title: PropTypes.string,
+  isUserListLoading: PropTypes.bool,
   userList: PropTypes.arrayOf(PropTypes.object),
 };
 
@@ -55,11 +57,13 @@ ChatBox.defaultProps = {
   messageList: [],
   subject: '',
   title: '',
+  isUserListLoading: false,
   userList: [],
 };
 
 function mapStateToProps(state) {
   return {
+    isUserListLoading: state.chat.isUserListLoading,
     author: state.chat.author,
     messageList: state.chat.messageList,
     subject: state.chat.subject,

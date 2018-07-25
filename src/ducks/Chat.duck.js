@@ -91,7 +91,7 @@ export const initialState = {
   clientId: '',
   isChatStreamEnabled: false,
   isChatStreamOnline: false,
-  isLoading: false,
+  isUserListLoading: false,
   messageList: [],
   responseMessage: '',
   subject: "Welcome to Jordan's Room",
@@ -120,11 +120,11 @@ export function reducer(state = initialState, action) {
   switch (action.type) {
     case GET_USER_LIST_AJAX_STARTED:
       return mergeToState({
-        isLoading: true,
+        isUserListLoading: true,
       });
     case GET_USER_LIST_AJAX_COMPLETED: {
       const updatedState = mergeToState({
-        isLoading: false,
+        isUserListLoading: false,
       });
 
       updatedState.userDictionary = action.payload;
@@ -133,7 +133,7 @@ export function reducer(state = initialState, action) {
     }
     case GET_USER_LIST_AJAX_ERROR:
       return mergeToState({
-        isLoading: false,
+        isUserListLoading: false,
         responseMessage: action.payload,
       });
     case CHAT_STREAM_TOGGLED: {

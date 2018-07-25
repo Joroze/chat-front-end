@@ -8,37 +8,42 @@ import { connect } from 'react-redux';
 import ChatBox from 'components/ChatBox/ChatBox';
 import { toggleChatStream } from '../../ducks/Chat.duck';
 
-function Lobby(props) {
-  const {
-    isChatStreamEnabled,
-    isChatStreamOnline,
-    toggleChatStreamDispatch,
-  } = props;
+class Lobby extends React.Component {
+  componentDidMount() {
+    this.handleOnToggleChat = this.handleOnToggleChat.bind(this);
+    this.handleOnToggleChat();
+  }
 
-  function handleOnToggleChat() {
+  handleOnToggleChat() {
+    const { toggleChatStreamDispatch, isChatStreamEnabled } = this.props;
     toggleChatStreamDispatch(isChatStreamEnabled);
   }
-  return (
-    <div className="component-lobby">
-      <div className="control-header">
-        <div className="connection-status-text">
-          Connection:
-          <span className={`status ${isChatStreamOnline ? 'online' : 'offline'}`}>
-            {isChatStreamOnline ? 'Online' : 'Offline'}
-          </span>
+
+  render() {
+    const { isChatStreamEnabled, isChatStreamOnline } = this.props;
+
+    return (
+      <div className="component-lobby">
+        <div className="control-header">
+          <div className="connection-status-text">
+            Connection:
+            <span className={`status ${isChatStreamOnline ? 'online' : 'offline'}`}>
+              {isChatStreamOnline ? 'Online' : 'Offline'}
+            </span>
+          </div>
+          <Checkbox
+            label="Toggle Connection"
+            toggle
+            checked={isChatStreamEnabled}
+            onChange={this.handleOnToggleChat}
+          />
         </div>
-        <Checkbox
-          label="Toggle Connection"
-          toggle
-          checked={isChatStreamEnabled}
-          onChange={handleOnToggleChat}
-        />
+
+
+        <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
       </div>
-
-
-      <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
-    </div>
-  );
+    );
+  }
 }
 
 Lobby.propTypes = {
