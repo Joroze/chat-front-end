@@ -37,11 +37,15 @@ export const GET_USER_LIST_AJAX_STARTED = 'ContactForm/GET_USER_LIST_AJAX_STARTE
 export const GET_USER_LIST_AJAX_COMPLETED = 'ContactForm/GET_USER_LIST_AJAX_COMPLETED';
 export const GET_USER_LIST_AJAX_ERROR = 'ContactForm/GET_USER_LIST_AJAX_ERROR';
 
+export const ON_INPUT_FIELD_CHANGE = 'ContactForm/ON_INPUT_FIELD_CHANGE';
+export const INPUT_FIELD_CHANGED = 'ContactForm/INPUT_FIELD_CHANGED';
+
 // Action Creators
 export const toggleChatStream = isEnabled => Action(CHAT_STREAM_TOGGLED, isEnabled);
 export const sendChat = msg => Action(CHAT_MESSAGE_ON_SUBMIT, msg);
 export const kickUser = socketId => Action(KICK_USER, socketId);
 export const getUserList = () => Action(GET_USER_LIST_AJAX);
+export const changeInputField = value => Action(ON_INPUT_FIELD_CHANGE, value);
 
 let socket;
 
@@ -94,6 +98,7 @@ export const initialState = {
   isUserListLoading: false,
   messageList: [],
   responseMessage: '',
+  inputField: '',
   subject: "Welcome to Jordan's Room",
   title: 'Chill Room',
   userDictionary: {},
@@ -118,6 +123,10 @@ export function reducer(state = initialState, action) {
   const mergeToState = R.merge(state);
 
   switch (action.type) {
+    case INPUT_FIELD_CHANGED:
+      return mergeToState({
+        inputField: action.payload,
+      });
     case GET_USER_LIST_AJAX_STARTED:
       return mergeToState({
         isUserListLoading: true,
@@ -202,6 +211,13 @@ export function reducer(state = initialState, action) {
 }
 
 // Epics
+function changeInputFieldEpic(action$) {
+  return action$.pipe(
+    ofType(ON_INPUT_FIELD_CHANGE),
+    map(action => Action(INPUT_FIELD_CHANGED, action.payload)),
+  );
+}
+
 function chatStreamToggleEpic(action$) {
   return action$.pipe(
     ofType(CHAT_STREAM_TOGGLED),
@@ -255,4 +271,5 @@ export const chatEpic = combineEpics(
   getUserListEpic,
   sendChatEpic,
   kickUserEpic,
+  changeInputFieldEpic,
 );

@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { kickUser, getUserSelector } from 'ducks/Chat.duck';
+import logo from 'img/logo.png';
 
 function UserListItem(props) {
   const {
@@ -48,9 +49,17 @@ function UserListItem(props) {
         </Button>
         ) }
       </List.Content>
-      { R.isEmpty(avatar)
-        ? <Icon size="big" name="user circle" />
-        : <Image avatar src={avatar} />
+
+      { isAdmin
+        ? <Image avatar src={logo} />
+        : (
+          <React.Fragment>
+            { R.isEmpty(avatar)
+              ? <Icon size="big" name="user circle" />
+              : <Image avatar src={avatar} />
+            }
+          </React.Fragment>
+        )
       }
       <List.Content>
         <List.Header>{username}</List.Header>
