@@ -4,14 +4,15 @@ import {
   Header,
 } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import uuidv4 from 'uuid/v4';
 
+import UserListItemLoader from 'components/UserListItemLoader/UserListItemLoader';
 import UserListItem from './UserListItem/UserListItem';
 
 function ChatUserListPane(props) {
   const {
     userList,
+    isLoading,
   } = props;
 
   return (
@@ -31,16 +32,24 @@ function ChatUserListPane(props) {
           isAuthor={user.isAuthor}
         />
       ))}
+
+      {isLoading && ([
+        <UserListItemLoader key="uli-loader-1" />,
+        <UserListItemLoader key="uli-loader-2" />,
+        <UserListItemLoader key="uli-loader-3" />,
+      ])}
     </List>
   );
 }
 
 ChatUserListPane.propTypes = {
   userList: PropTypes.arrayOf(PropTypes.object),
+  isLoading: PropTypes.bool,
 };
 
 ChatUserListPane.defaultProps = {
   userList: [],
+  isLoading: false,
 };
 
 export default ChatUserListPane;

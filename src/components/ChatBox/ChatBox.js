@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Dimmer, Loader } from 'semantic-ui-react';
 
 import { getUserListSelector } from 'ducks/Chat.duck';
 import ChatCommentPane from './components/ChatCommentPane/ChatCommentPane';
@@ -21,20 +20,17 @@ function ChatBox(props) {
 
   return (
     <div>
-      <Dimmer.Dimmable>
-        Room: {title}
-        <ChatCommentPane
-          messageList={messageList}
-          subject={subject}
-          userList={userList}
-        />
+      Room: {title}
+      <ChatCommentPane
+        online={online}
+        disabled={disabled}
+        messageList={messageList}
+        subject={subject}
+        userList={userList}
+      />
 
-        <ChatUserListPane userList={userList} />
-
-        <Dimmer active={!online || disabled || isUserListLoading}>
-          {(!online || isUserListLoading) && !disabled && <Loader content="Connecting..." />}
-        </Dimmer>
-      </Dimmer.Dimmable>
+      <ChatUserListPane isLoading={isUserListLoading} userList={userList} />
+      {(!online || isUserListLoading) && !disabled && 'Connecting...'}
     </div>
   );
 }
