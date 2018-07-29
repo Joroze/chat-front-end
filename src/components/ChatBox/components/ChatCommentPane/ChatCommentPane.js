@@ -27,10 +27,11 @@ class ChatCommentPane extends React.Component {
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    const { messageList: prevMessageList } = prevProps;
     const { messageList } = this.props;
-
-    if (messageList.length > 1) {
+    const messageListUpdated = messageList.length !== prevMessageList.length;
+    if (messageList.length > 1 && messageListUpdated) {
       this.scrollToBottom();
     }
   }
