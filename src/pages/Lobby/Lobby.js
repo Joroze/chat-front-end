@@ -6,6 +6,7 @@ import { Checkbox } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
 import ChatBox from 'components/ChatBox/ChatBox';
+import UserDetailsModal from 'components/UserDetailsModal/UserDetailsModal';
 import { toggleChatStream } from '../../ducks/Chat.duck';
 
 class Lobby extends React.Component {
@@ -40,6 +41,7 @@ class Lobby extends React.Component {
         </div>
 
 
+        <UserDetailsModal />
         <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
       </div>
     );

@@ -10,59 +10,70 @@ import {
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { connect } from 'react-redux';
-import { kickUser, getUserSelector } from 'ducks/Chat.duck';
+import { kickUser, viewUserDetails, getUserSelector } from 'ducks/Chat.duck';
+import { openModal } from 'ducks/UserDetailsModal.duck';
+
 import logo from 'img/logo.png';
 
 function UserListItem(props) {
   const {
-    username,
-    avatar,
-    isAdmin,
-    isModerator,
-    isAuthor,
+    user,
     clientUser,
-    userId,
+    openModalDispatch,
     kickUserDispatch,
+    viewUserDetailsDispatch,
   } = props;
 
   function handleClickKickUser() {
-    kickUserDispatch(userId);
+    kickUserDispatch(user.id);
+  }
+
+  function handleClickViewUserDetails() {
+    viewUserDetailsDispatch(user.id);
+    openModalDispatch(user.id);
   }
 
   let roleName = '';
 
   const isKickUserButtonVisible = clientUser && (clientUser.isAdmin || clientUser.isModerator);
-  const isSelf = clientUser.id === userId;
-  const isKickUserButtonDisabled = isSelf || isAdmin;
+  const isSelf = clientUser.id === user.id;
+  const isKickUserButtonDisabled = isSelf || user.isAdmin;
+  const isViewUserDetailsButtonDisabled = !clientUser.isAdmin;
 
-  if (isAuthor) roleName = 'Author';
-  else if (isAdmin) roleName = 'Admin';
-  else if (isModerator) roleName = 'Moderator';
+  if (user.isAuthor) roleName = 'Author';
+  else if (user.isAdmin) roleName = 'Admin';
+  else if (user.isModerator) roleName = 'Moderator';
 
   return (
     <List.Item>
       <List.Content floated="right">
         {isKickUserButtonVisible && (
-        <Button onClick={handleClickKickUser} disabled={isKickUserButtonDisabled} animated="vertical">
-          <Button.Content hidden><Icon name="hand peace outline" /></Button.Content>
-          <Button.Content visible>Kick</Button.Content>
-        </Button>
+          <React.Fragment>
+            <Button onClick={handleClickKickUser} disabled={isKickUserButtonDisabled} animated="vertical">
+              <Button.Content hidden><Icon name="hand peace outline" /></Button.Content>
+              <Button.Content visible>Kick</Button.Content>
+            </Button>
+            <Button onClick={handleClickViewUserDetails} disabled={isViewUserDetailsButtonDisabled} animated="vertical">
+              <Button.Content hidden>Details</Button.Content>
+              <Button.Content visible><Icon name="info" /></Button.Content>
+            </Button>
+          </React.Fragment>
         ) }
       </List.Content>
 
-      { isAdmin
+      { user.isAdmin
         ? <Image avatar src={logo} />
         : (
           <React.Fragment>
-            { R.isEmpty(avatar)
+            { !user.avatar
               ? <Icon size="big" name="user circle" />
-              : <Image avatar src={avatar} />
+              : <Image avatar src={user.avatar} />
             }
           </React.Fragment>
         )
       }
       <List.Content>
-        <List.Header>{username}</List.Header>
+        <List.Header>{user.username}</List.Header>
         {roleName} {isSelf ? '(Me)' : ''}
       </List.Content>
     </List.Item>
@@ -70,24 +81,19 @@ function UserListItem(props) {
 }
 
 UserListItem.propTypes = {
-  avatar: PropTypes.string,
-  userId: PropTypes.string,
-  isAdmin: PropTypes.bool,
-  isAuthor: PropTypes.bool,
-  isModerator: PropTypes.bool,
-  username: PropTypes.string,
+  user: PropTypes.object,
+  clientUser: PropTypes.object,
+  openModalDispatch: PropTypes.func,
   kickUserDispatch: PropTypes.func,
+  viewUserDetailsDispatch: PropTypes.func,
 };
 
 UserListItem.defaultProps = {
-  avatar: '',
-  userId: '',
-  isAdmin: false,
-  isAuthor: false,
+  user: {},
   clientUser: {},
-  isModerator: false,
-  username: 'Guest',
+  openModalDispatch: () => null,
   kickUserDispatch: () => null,
+  viewUserDetailsDispatch: () => null,
 };
 
 function mapStateToProps(state) {
@@ -98,7 +104,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    openModalDispatch: socketId => dispatch(openModal(socketId)),
     kickUserDispatch: socketId => dispatch(kickUser(socketId)),
+    viewUserDetailsDispatch: socketId => dispatch(viewUserDetails(socketId)),
   };
 }
 

@@ -23,13 +23,8 @@ function ChatUserListPane(props) {
 
       {userList.map(user => (
         <UserListItem
-          key={uuidv4()}
-          userId={user.id}
-          avatar={user.avatar}
-          username={user.username}
-          isAdmin={user.isAdmin}
-          isModerator={user.isModerator}
-          isAuthor={user.isAuthor}
+          key={user.id}
+          user={user}
         />
       ))}
 

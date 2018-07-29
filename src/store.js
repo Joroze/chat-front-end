@@ -11,13 +11,19 @@ import {
   reducer as chatReducer,
   chatEpic,
 } from './ducks/Chat.duck';
+import {
+  reducer as userDetailsModalReducer,
+  userDetailsModalEpic,
+} from './ducks/UserDetailsModal.duck';
 
 export const rootEpic = combineEpics(
   chatEpic,
+  userDetailsModalEpic,
 );
 
 const rootReducer = combineReducers({
   chat: chatReducer,
+  userDetailsModal: userDetailsModalReducer,
 });
 
 const epicMiddleware = createEpicMiddleware();

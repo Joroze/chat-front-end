@@ -27,12 +27,12 @@ class ChatCommentPane extends React.Component {
     this.handleOnSubmit = this.handleOnSubmit.bind(this);
   }
 
-  componentDidMount() {
-    this.scrollToBottom();
-  }
-
   componentDidUpdate() {
-    this.scrollToBottom();
+    const { messageList } = this.props;
+
+    if (messageList.length > 1) {
+      this.scrollToBottom();
+    }
   }
 
   setScrollBottomRef(element) {
@@ -76,10 +76,7 @@ class ChatCommentPane extends React.Component {
           {messageList.map(message => (
             <ChatMessage
               key={uuidv4()}
-              author={message.author}
-              timestamp={message.timestamp}
-              text={message.text}
-              type={message.type}
+              message={message}
             />
           ))}
           {!online && !disabled && ([

@@ -26,8 +26,11 @@ export const CHAT_MESSAGE_ON_SUBMIT = 'ContactForm/CHAT_MESSAGE_ON_SUBMIT';
 export const CHAT_MESSAGE_SENT = 'ContactForm/CHAT_MESSAGE_SENT';
 export const CHAT_MESSAGE_RECEIVED = 'ContactForm/CHAT_MESSAGE_RECEIVED';
 
-export const KICK_USER = 'ContactForm/KICK_USER';
+export const ON_KICK_USER = 'ContactForm/ON_KICK_USER';
 export const KICK_USER_SENT = 'ContactForm/KICK_USER_SENT';
+
+export const ON_VIEW_USER_DETAILS = 'ContactForm/ON_VIEW_USER_DETAILS';
+export const VIEW_USER_DETAILS_SENT = 'ContactForm/VIEW_USER_DETAILS_SENT';
 
 export const USER_UPDATE_RECEIVED = 'ContactForm/USER_UPDATE_RECEIVED';
 export const USER_LEAVE_RECEIVED = 'ContactForm/USER_LEAVE_RECEIVED';
@@ -43,7 +46,8 @@ export const INPUT_FIELD_CHANGED = 'ContactForm/INPUT_FIELD_CHANGED';
 // Action Creators
 export const toggleChatStream = isEnabled => Action(CHAT_STREAM_TOGGLED, isEnabled);
 export const sendChat = msg => Action(CHAT_MESSAGE_ON_SUBMIT, msg);
-export const kickUser = socketId => Action(KICK_USER, socketId);
+export const kickUser = socketId => Action(ON_KICK_USER, socketId);
+export const viewUserDetails = socketId => Action(ON_VIEW_USER_DETAILS, socketId);
 export const getUserList = () => Action(GET_USER_LIST_AJAX);
 export const changeInputField = value => Action(ON_INPUT_FIELD_CHANGE, value);
 
@@ -54,7 +58,7 @@ export const getSocket = () => socket;
 // Socket Handling
 export function connectSocket() {
   return (dispatch, getState) => {
-    socket = io('https://chat.backend.joroze.com:4001/chat');
+    socket = io('http://localhost:4001/chat');
 
     socket.on('connect', () => {
       dispatch(Action(CHAT_STREAM_CONNECTED, socket.id));
@@ -104,7 +108,7 @@ export const initialState = {
   userDictionary: {},
 };
 
-const userDictionarySelector = state => state.chat.userDictionary;
+export const userDictionarySelector = state => state.chat.userDictionary;
 const clientIdSelector = state => state.chat.clientId;
 
 export const getUserListSelector = createSelector(
@@ -246,7 +250,7 @@ function sendChatEpic(action$) {
 
 function kickUserEpic(action$) {
   return action$.pipe(
-    ofType(KICK_USER),
+    ofType(ON_KICK_USER),
     switchMap((action) => {
       socket.emit('disconnect_user', action.payload);
       return of(Action(KICK_USER_SENT));
@@ -254,10 +258,20 @@ function kickUserEpic(action$) {
   );
 }
 
+function viewUserDetailsEpic(action$) {
+  return action$.pipe(
+    ofType(ON_VIEW_USER_DETAILS),
+    switchMap((action) => {
+      socket.emit('user_details', action.payload);
+      return of(Action(VIEW_USER_DETAILS_SENT));
+    }),
+  );
+}
+
 function getUserListEpic(action$) {
   return action$.pipe(
     ofType(GET_USER_LIST_AJAX),
-    switchMap(action => ajax.getJSON('https://chat.backend.joroze.com:4001/users').pipe(
+    switchMap(() => ajax.getJSON('http://localhost:4001/users').pipe(
       map(result => Action(GET_USER_LIST_AJAX_COMPLETED, result)),
       catchError(error => ErrorAction(GET_USER_LIST_AJAX_ERROR, ajaxErrorMessage(error))),
       startWith(Action(GET_USER_LIST_AJAX_STARTED)),
@@ -265,11 +279,11 @@ function getUserListEpic(action$) {
   );
 }
 
-
 export const chatEpic = combineEpics(
   chatStreamToggleEpic,
   getUserListEpic,
   sendChatEpic,
   kickUserEpic,
   changeInputFieldEpic,
+  viewUserDetailsEpic,
 );

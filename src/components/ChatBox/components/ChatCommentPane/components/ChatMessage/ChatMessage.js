@@ -5,19 +5,23 @@ import { Comment, Icon } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { connect } from 'react-redux';
+import * as R from 'ramda';
 
 import { changeInputField } from 'ducks/Chat.duck';
 import logo from 'img/logo.png';
 
 function ChatMessage(props) {
   const {
-    author,
-    timestamp,
-    text,
-    type,
+    message,
     inputField,
     changeInputFieldDispatch,
   } = props;
+  const {
+    author = {},
+    timestamp,
+    text,
+    type,
+  } = message;
 
   const isServerMessage = type === 'server';
   let { username } = author;
@@ -56,28 +60,13 @@ function ChatMessage(props) {
 }
 
 ChatMessage.propTypes = {
-  author: PropTypes.shape({
-    username: PropTypes.string,
-    avatar: PropTypes.string,
-  }),
-  type: PropTypes.string,
-  timestamp: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.string,
-  ]),
-  text: PropTypes.string,
+  message: PropTypes.object,
   inputField: PropTypes.string,
   changeInputFieldDispatch: PropTypes.func,
 };
 
 ChatMessage.defaultProps = {
-  type: '',
-  author: {
-    username: '',
-    avatar: '',
-  },
-  timestamp: 'N/A',
-  text: '',
+  message: {},
   inputField: '',
   changeInputFieldDispatch: () => null,
 };

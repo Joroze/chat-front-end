@@ -1,13 +1,12 @@
 .component-chat-comment-pane {
   max-width: none !important; }
   .component-chat-comment-pane .comment-list {
-    position: relative;
     overflow-y: auto;
     max-height: 350px;
     min-height: 350px; }
     .component-chat-comment-pane .comment-list .inner-comment-list-bottom {
-      position: absolute;
-      bottom: 0; }
+      float: left;
+      clear: both; }
   .component-chat-comment-pane .ui.form .field.disabled textarea:disabled {
     background: #9c9c9c99; }
 
