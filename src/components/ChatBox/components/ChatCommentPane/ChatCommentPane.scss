@@ -2,14 +2,13 @@
     max-width: none !important;
 
     .comment-list {
-        position: relative;
         overflow-y: auto;
         max-height: 350px;
         min-height: 350px;
 
         .inner-comment-list-bottom {
-            position: absolute;
-            bottom: 0;
+            float: left;
+            clear: both;
         }
     }
 

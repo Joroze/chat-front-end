@@ -89,11 +89,7 @@ class ChatCommentPane extends React.Component {
             <MessageLoader key="m-loader-4" />,
             <MessageLoader key="m-loader-5" />,
           ])}
-          <div
-            className="inner-comment-list-bottom"
-            style={{ float: 'left', clear: 'both' }}
-            ref={this.setScrollBottomRef}
-          />
+          <div className="inner-comment-list-bottom" ref={this.setScrollBottomRef} />
         </div>
 
         <Form disabled={!online || disabled} reply>
