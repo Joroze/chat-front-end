@@ -58,7 +58,7 @@ export const getSocket = () => socket;
 // Socket Handling
 export function connectSocket() {
   return (dispatch, getState) => {
-    socket = io('http://localhost:4001/chat');
+    socket = io('https://chat.backend.joroze.com:4001/chat');
 
     socket.on('connect', () => {
       dispatch(Action(CHAT_STREAM_CONNECTED, socket.id));
@@ -271,7 +271,7 @@ function viewUserDetailsEpic(action$) {
 function getUserListEpic(action$) {
   return action$.pipe(
     ofType(GET_USER_LIST_AJAX),
-    switchMap(() => ajax.getJSON('http://localhost:4001/users').pipe(
+    switchMap(() => ajax.getJSON('https://chat.backend.joroze.com:4001/users').pipe(
       map(result => Action(GET_USER_LIST_AJAX_COMPLETED, result)),
       catchError(error => ErrorAction(GET_USER_LIST_AJAX_ERROR, ajaxErrorMessage(error))),
       startWith(Action(GET_USER_LIST_AJAX_STARTED)),
