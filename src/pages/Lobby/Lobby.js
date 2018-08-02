@@ -21,7 +21,11 @@ class Lobby extends React.Component {
   }
 
   render() {
-    const { isChatStreamEnabled, isChatStreamOnline } = this.props;
+    const {
+      isChatStreamEnabled,
+      isChatStreamOnline,
+      isUserDetailsModalOpen,
+    } = this.props;
 
     return (
       <div className="component-lobby">
@@ -41,7 +45,7 @@ class Lobby extends React.Component {
         </div>
 
 
-        <UserDetailsModal />
+        {isUserDetailsModalOpen && <UserDetailsModal />}
 
         { isChatStreamEnabled
           ? <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
@@ -65,17 +69,20 @@ class Lobby extends React.Component {
 Lobby.propTypes = {
   isChatStreamEnabled: PropTypes.bool,
   isChatStreamOnline: PropTypes.bool,
+  isUserDetailsModalOpen: PropTypes.bool,
   toggleChatStreamDispatch: PropTypes.func,
 };
 
 Lobby.defaultProps = {
   isChatStreamEnabled: false,
   isChatStreamOnline: false,
+  isUserDetailsModalOpen: false,
   toggleChatStreamDispatch: () => null,
 };
 
 function mapStateToProps(state) {
   return {
+    isUserDetailsModalOpen: state.userDetailsModal.isOpen,
     isChatStreamEnabled: state.chat.isChatStreamEnabled,
     isChatStreamOnline: state.chat.isChatStreamOnline,
   };

@@ -13,16 +13,21 @@ import { connect } from 'react-redux';
 import { closeModal, getSelectedUser } from 'ducks/UserDetailsModal.duck';
 
 function UserDetailsModal(props) {
-  const { closeModalDispatch, isOpen, user } = props;
+  const { closeModalDispatch, user } = props;
 
   return (
-    <Modal className="component-user-details-modal" open={isOpen} onClose={closeModalDispatch} basic size="small">
-      <Header icon="detective" content={`${user.username}'s Profile Details`} />
+    <Modal className="component-user-details-modal" open onClose={closeModalDispatch} basic size="small">
+      <Header icon="detective" content={`${user.username || 'User'}'s Profile Details`} />
       <Modal.Content>
-        <p>
-        The following is {`${user.username}'s`} data:
-          {JSON.stringify(user)}
-        </p>
+        {Object.keys(user).map((key) => {
+          const userValue = user[key];
+
+          if (key === 'location' && typeof userValue === 'object') {
+            return Object.keys(userValue).map(innerKey => <p key={innerKey}>{`${innerKey}: ${userValue[innerKey]}`}</p>);
+          }
+
+          return <p key={key}>{`${key}: ${userValue}`}</p>;
+        })}
       </Modal.Content>
       <Modal.Actions>
         <Button basic color="blue" inverted onClick={closeModalDispatch}>
@@ -35,19 +40,16 @@ function UserDetailsModal(props) {
 
 UserDetailsModal.propTypes = {
   user: PropTypes.object,
-  isOpen: PropTypes.bool,
   closeModalDispatch: PropTypes.func,
 };
 
 UserDetailsModal.defaultProps = {
   user: {},
-  isOpen: false,
   closeModalDispatch: () => null,
 };
 
 function mapStateToProps(state) {
   return {
-    isOpen: state.userDetailsModal.isOpen,
     user: getSelectedUser(state),
   };
 }
