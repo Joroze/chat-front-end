@@ -27,3 +27,21 @@ td > a {
     opacity: 0;
     transition: visibility 0s 0.5s, opacity 0.5s linear;
 }
+
+button.as-text {
+    background: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: dodgerblue;
+    cursor: pointer;
+    
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+}

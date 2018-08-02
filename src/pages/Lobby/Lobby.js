@@ -2,7 +2,7 @@ import './Lobby.css';
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from 'semantic-ui-react';
+import { Checkbox, Message, Icon } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
 import ChatBox from 'components/ChatBox/ChatBox';
@@ -42,7 +42,21 @@ class Lobby extends React.Component {
 
 
         <UserDetailsModal />
-        <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
+
+        { isChatStreamEnabled
+          ? <ChatBox online={isChatStreamOnline} disabled={!isChatStreamEnabled} />
+          : (
+            <div>
+              <Message icon>
+                <Icon name="exclamation circle" />
+                <Message.Content>
+                  <Message.Header>You are not online.</Message.Header>
+                  <button type="button" className="as-text" onClick={this.handleOnToggleChat}>Click here to rejoin the chat room.</button>
+                </Message.Content>
+              </Message>
+            </div>
+          )
+        }
       </div>
     );
   }

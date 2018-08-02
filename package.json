@@ -10,8 +10,7 @@
         "url": "https://github.com/Joroze/chat-front-end.git"
     },
     "author": {
-        "name": "Jordan Rosenberg",
-        "url": "https://joroze.com"
+        "name": "Jordan Rosenberg"
     },
     "private": true,
     "dependencies": {

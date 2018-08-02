@@ -20,3 +20,15 @@ td > a {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s 0.5s, opacity 0.5s linear; }
+
+button.as-text {
+  background: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: dodgerblue;
+  cursor: pointer; }
+  button.as-text:hover {
+    text-decoration: underline; }
+  button.as-text:focus {
+    outline: none; }

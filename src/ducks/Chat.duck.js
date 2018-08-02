@@ -15,33 +15,33 @@ import * as R from 'ramda';
 import { ajaxErrorMessage, Action, ErrorAction } from '../utilities';
 
 // Actions
-export const CHAT_STREAM_TOGGLED = 'ContactForm/CHAT_STREAM_TOGGLED';
-export const CHAT_STREAM_STARTED = 'ContactForm/CHAT_STREAM_STARTED';
-export const CHAT_STREAM_STOPPED = 'ContactForm/CHAT_STREAM_STOPPED';
-export const CHAT_STREAM_CONNECTED = 'ContactForm/CHAT_STREAM_CONNECTED';
-export const CHAT_STREAM_DISCONNECTED = 'ContactForm/CHAT_STREAM_DISCONNECTED';
-export const CHAT_STREAM_ERROR = 'ContactForm/CHAT_STREAM_ERROR';
+export const CHAT_STREAM_TOGGLED = 'Chat/CHAT_STREAM_TOGGLED';
+export const CHAT_STREAM_STARTED = 'Chat/CHAT_STREAM_STARTED';
+export const CHAT_STREAM_STOPPED = 'Chat/CHAT_STREAM_STOPPED';
+export const CHAT_STREAM_CONNECTED = 'Chat/CHAT_STREAM_CONNECTED';
+export const CHAT_STREAM_DISCONNECTED = 'Chat/CHAT_STREAM_DISCONNECTED';
+export const CHAT_STREAM_ERROR = 'Chat/CHAT_STREAM_ERROR';
 
-export const CHAT_MESSAGE_ON_SUBMIT = 'ContactForm/CHAT_MESSAGE_ON_SUBMIT';
-export const CHAT_MESSAGE_SENT = 'ContactForm/CHAT_MESSAGE_SENT';
-export const CHAT_MESSAGE_RECEIVED = 'ContactForm/CHAT_MESSAGE_RECEIVED';
+export const CHAT_MESSAGE_ON_SUBMIT = 'Chat/CHAT_MESSAGE_ON_SUBMIT';
+export const CHAT_MESSAGE_SENT = 'Chat/CHAT_MESSAGE_SENT';
+export const CHAT_MESSAGE_RECEIVED = 'Chat/CHAT_MESSAGE_RECEIVED';
 
-export const ON_KICK_USER = 'ContactForm/ON_KICK_USER';
-export const KICK_USER_SENT = 'ContactForm/KICK_USER_SENT';
+export const ON_KICK_USER = 'Chat/ON_KICK_USER';
+export const KICK_USER_SENT = 'Chat/KICK_USER_SENT';
 
-export const ON_VIEW_USER_DETAILS = 'ContactForm/ON_VIEW_USER_DETAILS';
-export const VIEW_USER_DETAILS_SENT = 'ContactForm/VIEW_USER_DETAILS_SENT';
+export const ON_VIEW_USER_DETAILS = 'Chat/ON_VIEW_USER_DETAILS';
+export const VIEW_USER_DETAILS_SENT = 'Chat/VIEW_USER_DETAILS_SENT';
 
-export const USER_UPDATE_RECEIVED = 'ContactForm/USER_UPDATE_RECEIVED';
-export const USER_LEAVE_RECEIVED = 'ContactForm/USER_LEAVE_RECEIVED';
+export const USER_UPDATE_RECEIVED = 'Chat/USER_UPDATE_RECEIVED';
+export const USER_LEAVE_RECEIVED = 'Chat/USER_LEAVE_RECEIVED';
 
-export const GET_USER_LIST_AJAX = 'ContactForm/GET_USER_LIST_AJAX';
-export const GET_USER_LIST_AJAX_STARTED = 'ContactForm/GET_USER_LIST_AJAX_STARTED';
-export const GET_USER_LIST_AJAX_COMPLETED = 'ContactForm/GET_USER_LIST_AJAX_COMPLETED';
-export const GET_USER_LIST_AJAX_ERROR = 'ContactForm/GET_USER_LIST_AJAX_ERROR';
+export const GET_USER_LIST_AJAX = 'Chat/GET_USER_LIST_AJAX';
+export const GET_USER_LIST_AJAX_STARTED = 'Chat/GET_USER_LIST_AJAX_STARTED';
+export const GET_USER_LIST_AJAX_COMPLETED = 'Chat/GET_USER_LIST_AJAX_COMPLETED';
+export const GET_USER_LIST_AJAX_ERROR = 'Chat/GET_USER_LIST_AJAX_ERROR';
 
-export const ON_INPUT_FIELD_CHANGE = 'ContactForm/ON_INPUT_FIELD_CHANGE';
-export const INPUT_FIELD_CHANGED = 'ContactForm/INPUT_FIELD_CHANGED';
+export const ON_INPUT_FIELD_CHANGE = 'Chat/ON_INPUT_FIELD_CHANGE';
+export const INPUT_FIELD_CHANGED = 'Chat/INPUT_FIELD_CHANGED';
 
 // Action Creators
 export const toggleChatStream = isEnabled => Action(CHAT_STREAM_TOGGLED, isEnabled);
