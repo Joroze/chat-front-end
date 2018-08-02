@@ -38,7 +38,7 @@ function UserListItem(props) {
   const isKickUserButtonVisible = clientUser && (clientUser.isAdmin || clientUser.isModerator);
   const isSelf = clientUser.id === user.id;
   const isKickUserButtonDisabled = isSelf || user.isAdmin;
-  const isViewUserDetailsButtonDisabled = !clientUser.isAdmin;
+  const isViewUserDetailsButtonDisabled = !clientUser.isAdmin || (user.isAdmin && !isSelf);
 
   if (user.isAuthor) roleName = 'Author';
   else if (user.isAdmin) roleName = 'Admin';
